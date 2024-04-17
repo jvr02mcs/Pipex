@@ -1,7 +1,7 @@
 NAME = pipex
 
 GREEN = \033[0;32m
-LIGHT_GREEN = \033[0;42m
+LIGHT_GREEN = \033[0;33m
 RED = \033[0;31m
 NC = \033[0m
 
@@ -28,12 +28,12 @@ $(NAME) : $(OBJ) $(HEADER)
 all : $(NAME)
 %.o : %.c
 	@$(CC) -c $(CCFLAGS) $< -o $@
-	@echo "$(LIGHT_GREEN)     ---------------------     $(NC)     "
-	@echo "$(LIGHT_GREEN)    |  Compiling pipex ...|    $(NC)    "
-	@echo "$(LIGHT_GREEN)     ---------------------     $(NC)     "
-	@echo "$(LIGHT_GREEN)      |                 |      $(NC)      "
-	@echo "$(LIGHT_GREEN)      |                 |      $(NC)      "
-	@echo "$(LIGHT_GREEN)      |                 |      $(NC)      "
+	@echo "$(LIGHT_GREEN) ---------------------     $(NC)     "
+	@echo "$(LIGHT_GREEN)|  Compiling pipex ...|    $(NC)    "
+	@echo "$(LIGHT_GREEN) ---------------------     $(NC)     "
+	@echo "$(LIGHT_GREEN)  |                 |      $(NC)      "
+	@echo "$(LIGHT_GREEN)  |                 |      $(NC)      "
+	@echo "$(LIGHT_GREEN)  |                 |      $(NC)      "
 
 clean:
 	@make clean -C ./ft_printf
