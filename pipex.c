@@ -1,17 +1,12 @@
 #include "pipex.h"
 
-void write_a(char **a)
+typedef struct s_files
 {
-	int i;
+	int infile;
+	int outfile;
+	int fd[2];
+} t_files;
 
-	i = 0;
-	while (*a)
-	{
-		printf("%s : %d\n", *a, i);
-		i++;
-		a++;
-	}
-}
 char	*make_cmd(char **cmdp, char **cmda)
 {
 	int i;
@@ -19,8 +14,6 @@ char	*make_cmd(char **cmdp, char **cmda)
 	char *aux2;
 
 	i = 0;
-	if (access(cmda[0], 0) == 0)
-		return (cmda[0]);
 	while(cmdp[i])
 	{
 		aux = ft_strjoin(cmdp[i], "/");
@@ -44,6 +37,7 @@ char	*find_path(char **e)
 	}
 	return (NULL);
 }
+
 void	error(int f, char *err, char *i)
 {
 	write(STDERR_FILENO, "pipex: ", 8);
@@ -60,72 +54,111 @@ void	error(int f, char *err, char *i)
 		write(STDERR_FILENO, "\n", 2);
 	}
 }
-
-void	childd(char **a, char **cmdp, int fd[2], char **e)
+char **ft_make_cmda(char *a)
 {
-	int		infile;
+	int	i;
+	char **aux;
+
+	aux = NULL;
+	i = 0;
+	while (a[i])
+	{
+		if (a[i] == ' ')
+			a[i++] = '_';
+		else if (a[i] == '\'')
+		{
+			a[i] = '_';
+			while(a[i] != '\'')
+				i++;
+			a[i] = '_';
+		}
+		else
+			i++;
+	}
+	aux = ft_split(a, '_');
+	return (aux);
+}
+
+void	childd(char **a, char **cmdp, t_files f, char *cmd, char **e)
+{
 	char	**cmda;
-	char	*cmd;
-	infile = open(a[1], O_RDONLY, 0644);
-	if (infile < 0)
+	f.infile = open(a[1], O_RDONLY, 0644);
+	if (f.infile < 0)
 		error(2, "No such file or directory: ", a[1]);
-	cmda = ft_split(a[2], ' ');
+	cmda = ft_make_cmda(a[2]);
 	cmd = make_cmd(cmdp, cmda);
 	if (!cmd)
 	{
-		error(2, "Command not found: ", a[2]);
+		if (!(f.infile < 0))
+			error(2, "command not found: ", cmda[0]);
 		exit(EXIT_FAILURE);
 	}
-	close(fd[0]);
-	dup2(infile, STDIN_FILENO);
-	dup2(fd[1], STDOUT_FILENO);
-	if (execve(cmd, cmda, e) < 0)
+	if (f.infile < 0)
 		exit(EXIT_FAILURE);
+	close(f.fd[0]);
+	dup2(f.infile, STDIN_FILENO);
+	dup2(f.fd[1], STDOUT_FILENO);
+	if (execve(cmd, cmda, e) < 0)
+		exit(127);
 	exit (EXIT_SUCCESS);
 }
-int	daddy(char **a, char **cmdp, int fd[2], char **e)
+void	daddy(char **a, char **cmdp, t_files f, char *cmd, char **e)
 {
-	int		outfile;
 	char	**cmda;
-	char	*cmd;
-	outfile = open(a[4], O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (outfile < 0)
+
+	f.outfile = open(a[4], O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (f.outfile < 0)
+	{
 		error(2, "Outfile error: ", NULL);
-	cmda = ft_split(a[3], ' ');
+		exit(EXIT_FAILURE);
+	}
+	cmda = ft_make_cmda(a[3]);
 	cmd = make_cmd(cmdp, cmda);
 	if (!cmd)
 	{
-		error(2, "Command not found: ", a[3]);
-		exit(EXIT_FAILURE);
+		error(2, "command not found: ", cmda[0]);
+		exit(127);
 	}
-	close(fd[1]);
-	dup2(fd[0], STDIN_FILENO);
-	dup2(outfile, STDOUT_FILENO);
+	close(f.fd[1]);
+	dup2(f.fd[0], STDIN_FILENO);
+	dup2(f.outfile, STDOUT_FILENO);
 	if (execve(cmd, cmda, e) < 0)
-		exit(EXIT_FAILURE);
+		exit(127);
 	exit (EXIT_SUCCESS);
 }
 
-int main (int c, char **a, char **e)
+void	ft_pipex(char **a, char *c1, char *c2, char **e)
 {
-	int		fd[2];
 	char	*path;
 	char	**cmdp;
 	pid_t	pid;
+	t_files f;
+
+	path = find_path(e);
+	cmdp = ft_split(path, ':');
+	if (pipe(f.fd) < 0)
+		error(1, "Pipe", NULL);
+	pid = fork();
+	if (pid < 0)
+		error(1, "Fork", NULL);
+	if (pid == 0)
+		childd(a, cmdp, f, c1, e);
+	waitpid(pid, NULL, 0);
+	daddy(a, cmdp, f, c2, e);
+}
+int main (int c, char **a, char **e)
+{
+	char	*c1;
+	char	*c2;
+
+	c1 = NULL;
+	c2 = NULL;
 	if (c == 5)
 	{
-		path = find_path(e);
-		cmdp = ft_split(path, ':');
-		if (pipe(fd) < 0)
-			error(1, "Pipe", NULL);
-		pid = fork();
-		if (pid < 0)
-			error(1, "Fork", NULL);
-		if (pid == 0)
-			childd(a, cmdp, fd, e);
-		waitpid(pid, NULL, 0);
-		daddy(a, cmdp, fd, e);
-	return (0);
+		ft_pipex(a, c1, c2, e);
+		return (0);
 	}
+	ft_printf("Ivalid number of arguments\n");
+	ft_printf("Ex: <./pipex> <file1> <cmd1> <cmd2> <file2>\n");
 	return (1);
 }

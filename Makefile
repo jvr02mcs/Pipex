@@ -37,12 +37,11 @@ all : $(NAME)
 clean:
 	@make clean -C ./ft_printf
 	@$(RM) $(OBJ)
-	@echo "$(RED)pipex cleaned$(NC)"
+	@echo "$(GREEN)pipex cleaned$(NC)"
 
 fclean: clean
 	@@make fclean -C ./ft_printf
 	@$(RM) $(NAME)
-	@echo "$(RED)fclean pipex$(NC)"
 
 re: fclean all
 
