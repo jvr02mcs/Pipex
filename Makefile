@@ -16,6 +16,7 @@ CCFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
 SRC = pipex.c\
+	utils.c\
 
 OBJ = $(SRC:.c=.o)
 
