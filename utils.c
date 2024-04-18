@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jrubio-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/17 14:48:00 by jrubio-m          #+#    #+#             */
-/*   Updated: 2024/04/17 15:55:01 by jrubio-m         ###   ########.fr       */
+/*   Created: 2024/04/18 15:49:43 by jrubio-m          #+#    #+#             */
+/*   Updated: 2024/04/18 20:00:26 by jrubio-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,44 +28,18 @@ char	*find_path(char **e)
 
 void	error(int f, char *err, char *i)
 {
+	if (f == 1)
+		write(STDERR_FILENO, "\033[0;31merror:\033[0m ", 19);
 	write(STDERR_FILENO, "pipex: ", 8);
 	if (f == 1)
-	{
-		write(STDERR_FILENO, "Error in:\n", 11);
 		write(STDERR_FILENO, err, ft_strlen(err));
-	}
 	else
 	{
-		write(1, err, ft_strlen(err));
+		write(STDERR_FILENO, err, ft_strlen(err));
 		if (i)
 			write(STDERR_FILENO, i, ft_strlen(i));
+	}
 		write(STDERR_FILENO, "\n", 2);
-	}
-}
-
-char	**ft_make_cmda(char *a)
-{
-	int		i;
-	char	**aux;
-
-	aux = NULL;
-	i = 0;
-	while (a[i])
-	{
-		if (a[i] == ' ')
-			a[i++] = '_';
-		else if (a[i] == '\'')
-		{
-			a[i] = '_';
-			while (a[i] != '\'')
-				i++;
-			a[i] = '_';
-		}
-		else
-			i++;
-	}
-	aux = ft_split(a, '_');
-	return (aux);
 }
 
 char	*make_cmd(char **cmdp, char **cmda)

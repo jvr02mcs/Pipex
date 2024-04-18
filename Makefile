@@ -24,7 +24,7 @@ $(NAME) : $(OBJ) $(HEADER)
 	@make -C ./ft_printf
 	@$(CC) $(CCFLAGS) $(SRC) ./ft_printf/libft/*.c ./ft_printf/*.c -o $(NAME)
 	@echo "$(GREEN)pipex compiled!!$(NC)"
-	@echo "$(GREEN)Compilation success!!!$(NC)"
+	@echo "$(GREEN)---Compilation success!!!---$(NC)"
 all : $(NAME)
 %.o : %.c
 	@$(CC) -c $(CCFLAGS) $< -o $@

@@ -6,7 +6,7 @@
 /*   By: jrubio-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 15:09:27 by jrubio-m          #+#    #+#             */
-/*   Updated: 2024/04/17 15:10:06 by jrubio-m         ###   ########.fr       */
+/*   Updated: 2024/04/18 17:14:21 by jrubio-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,17 @@ typedef struct s_utils
 	char	**cmdp;
 }	t_utils;
 
+typedef struct s_pids
+{
+	pid_t	one;
+	pid_t	two;
+	int		sone;
+	int		stwo;
+
+}	t_pids;
+
 char	*find_path(char **e);
 void	error(int f, char *err, char *i);
-char	**ft_make_cmda(char *a);
 char	*make_cmd(char **cmdp, char **cmda);
 
 #endif
