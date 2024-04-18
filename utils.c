@@ -6,7 +6,7 @@
 /*   By: jrubio-m <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 15:49:43 by jrubio-m          #+#    #+#             */
-/*   Updated: 2024/04/18 20:00:26 by jrubio-m         ###   ########.fr       */
+/*   Updated: 2024/04/18 20:28:39 by jrubio-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	error(int f, char *err, char *i)
 		if (i)
 			write(STDERR_FILENO, i, ft_strlen(i));
 	}
-		write(STDERR_FILENO, "\n", 2);
+	write(STDERR_FILENO, "\n", 2);
 }
 
 char	*make_cmd(char **cmdp, char **cmda)
